@@ -1,1 +1,12 @@
-﻿
+﻿<canvas id="gameCanvas" width="500" height="500"></canvas>
+
+@section scripts
+{
+    <script src="~/Scripts/Game.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            var game = gameCreator.create("gameCanvas");
+        });
+    </script>
+}
