@@ -15,6 +15,22 @@
             this.left += dx;
             this.top += dy;
         };
+
+        this.getBottom = function() {
+            return this.top + height;
+        };
+
+        this.getRight = function() {
+            return this.left + width;
+        };
+
+        this.setBottom = function(bottom) {
+            this.top = bottom - this.height;
+        };
+
+        this.setRight = function(right) {
+            this.left = right - this.width;
+        };
     }
 
     function GameEngine(update, draw, canvas) {
@@ -125,18 +141,20 @@
             ball.update(elapsed);
 
             ensureBallIsOnScreen();
+            ensurePlayerIsOnItsSide(player1, new Rectangle(0, 0, getCenter(), canvas.height));
+            ensurePlayerIsOnItsSide(player2, new Rectangle(getCenter(), 0, canvas.width / 2, canvas.height));
         };
 
         function draw(context) {
 
             context.beginPath();
-            context.lineWidth = "5";
+            context.lineWidth = "4";
             context.strokeStyle = "black";
             context.rect(0, 0, canvas.width, canvas.height);
             context.stroke();
 
-            context.moveTo(getCenter(), 0);
-            context.lineTo(getCenter(), canvas.height);
+            context.moveTo(getCenter() - 2, 0);
+            context.lineTo(getCenter() - 2, canvas.height);
             context.stroke();
 
             player1.draw(context);
@@ -163,7 +181,21 @@
         }
 
         function ensurePlayerIsOnItsSide(player, rectangle) {
-            
+            if (player.rectangle.left < rectangle.left) {
+                player.rectangle.left = rectangle.left;
+            }
+
+            if (player.rectangle.top < rectangle.top) {
+                player.rectangle.top = rectangle.top;
+            }
+
+            if (player.rectangle.getBottom() > rectangle.getBottom()) {
+                player.rectangle.setBottom(rectangle.getBottom());
+            }
+
+            if (player.rectangle.getRight() > rectangle.getRight()) {
+                player.rectangle.setRight(rectangle.getRight());
+            }
         }
 
         var ge = new GameEngine(update, draw, canvas);
