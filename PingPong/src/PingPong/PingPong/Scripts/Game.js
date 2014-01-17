@@ -1,7 +1,5 @@
-﻿var pingPong = (function (jQuery, document) {
-
-    var canvas;
-
+﻿var pingPongFactory = (function (jQuery, document) {
+    
     function Rectangle(left, top, width, height) {
         this.left = left;
         this.top = top;
@@ -19,7 +17,7 @@
         };
     }
 
-    function GameEngine(update, draw) {
+    function GameEngine(update, draw, canvas) {
         this.frameRate = 60;
         
         var context = canvas.getContext("2d");
@@ -80,28 +78,12 @@
         }
 
         this.rectangle = rectangle;
-        this.dx = 100;
-        this.dy = 100;
+        this.dx = 1300;
+        this.dy = 1300;
 
         this.update = function (elapsed) {
             this.rectangle.offset(this.dx * elapsed,
                                   this.dy * elapsed);
-
-            if (rectangle.left < 0) {
-                this.dx = Math.abs(this.dx);
-            }
-
-            if (rectangle.left + rectangle.width > canvas.width) {
-                this.dx = -Math.abs(this.dx);
-            }
-
-            if (rectangle.top < 0) {
-                this.dy = Math.abs(this.dy);
-            }
-
-            if (rectangle.top + rectangle.height > canvas.height) {
-                this.dy = -Math.abs(this.dy);
-            }
         };
 
         this.draw = function (context) {
@@ -117,36 +99,81 @@
         };
     }
 
-    var player1 = new Player(new Rectangle(10, 10, 10, 100));
-    var player2 = new Player(new Rectangle(100, 10, 10, 100));
-    var ball = new Ball(new Rectangle(50, 100, 50, 50));
-    var ge;
+    function PingPong(canvasId) {
+
+        var canvas = document.getElementById(canvasId);
+
+        var player1 = new Player(new Rectangle(10, 10, 10, 100));
+        var player2 = new Player(new Rectangle(100, 10, 10, 100));
+        var ball = new Ball(new Rectangle(50, 100, 50, 50));
+        
+        this.setPlayer1Position = function(x, y) {
+            player1.rectangle.setPosition(x, y);
+        };
+
+        this.setPlayer2Position = function(x, y) {
+            player2.rectangle.setPosition(x, y);
+        };
+
+        function getCenter() {
+            return canvas.width / 2;
+        }
+
+        function update(elapsed) {
+            player1.update(elapsed);
+            player2.update(elapsed);
+            ball.update(elapsed);
+
+            ensureBallIsOnScreen();
+        };
+
+        function draw(context) {
+
+            context.beginPath();
+            context.lineWidth = "5";
+            context.strokeStyle = "black";
+            context.rect(0, 0, canvas.width, canvas.height);
+            context.stroke();
+
+            context.moveTo(getCenter(), 0);
+            context.lineTo(getCenter(), canvas.height);
+            context.stroke();
+
+            player1.draw(context);
+            player2.draw(context);
+            ball.draw(context);
+        };
+
+        function ensureBallIsOnScreen() {
+            if (ball.rectangle.left < 0) {
+                ball.dx = Math.abs(ball.dx);
+            }
+
+            if (ball.rectangle.left + ball.rectangle.width > canvas.width) {
+                ball.dx = -Math.abs(ball.dx);
+            }
+
+            if (ball.rectangle.top < 0) {
+                ball.dy = Math.abs(ball.dy);
+            }
+
+            if (ball.rectangle.top + ball.rectangle.height > canvas.height) {
+                ball.dy = -Math.abs(ball.dy);
+            }
+        }
+
+        function ensurePlayerIsOnItsSide(player, rectangle) {
+            
+        }
+
+        var ge = new GameEngine(update, draw, canvas);
+        ge.start();
+    }
 
     return {
-        init: function (canvasId) {
-            canvas = document.getElementById(canvasId);
-            
-            ge = new GameEngine(function (elapsed) {
-                                    player1.update(elapsed);
-                                    player2.update(elapsed);
-                                    ball.update(elapsed);
-                                },
-                                function (context) {
-                                    player1.draw(context);
-                                    player2.draw(context);
-                                    ball.draw(context);
-                                },
-                                canvasId);
-            ge.start();
-        },
-
-        setPlayer1Position: function (x, y) {
-            player1.rectangle.setPosition(x, y);
-        },
-
-        setPlayer2Position: function (x, y) {
-            player2.rectangle.setPosition(x, y);
+        init: function(canvasId) {
+            return new PingPong(canvasId);
         }
-    };
+};
 
 })(jQuery, document)

@@ -9,7 +9,7 @@
 
     <script>
         $(document).ready(function () {
-            pingPong.init("gameCanvas");
+            window.pingPongGame = pingPongFactory.init("gameCanvas");
 
             resizeGame();
             window.addEventListener('resize', resizeGame, false);
