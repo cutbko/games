@@ -72,6 +72,10 @@
         this.intersectsCircle = function (circle) {
             return intersects(circle, this);
         };
+
+        this.intersectsRectangle = function(rectangle) {
+            
+        };
     }
 
     return {

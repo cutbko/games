@@ -3,7 +3,6 @@
     ViewBag.Title = "Geometry library tests";
     Layout = "~/Views/Shared/_QUnitLayot.cshtml";
 }
-    <h2>Geometry library tests</h2>
 
 @section scripts
 {
@@ -11,6 +10,8 @@
 
     <script>
         require(['geometry'], function(geometry) {
+
+            module("circle - circle intersection");
 
             test("circle doesnt intersect circle", function () {
                 var circle1 = new geometry.Circle(10, 10, 20);
@@ -24,9 +25,77 @@
                 ok(circle1.intersectsCircle(circle1));
             });
 
-            test("circle intersects itself", function() {
-                var circle1 = new geometry.Circle(10, 10, 20);
-                ok(circle1.intersectsCircle(circle1));
+            test("circle intersects inner and outer", function () {
+                var outer = new geometry.Circle(10, 10, 20);
+                var inner = new geometry.Circle(10, 10, 10);
+                ok(outer.intersectsCircle(inner));
+                ok(inner.intersectsCircle(outer));
+            });
+
+            test("circles intersect when touched", function () {
+                var circle1 = new geometry.Circle(10, 10, 10);
+                var circle2 = new geometry.Circle(20, 10, 10);
+                ok(circle1.intersectsCircle(circle2));
+                ok(circle2.intersectsCircle(circle1));
+            });
+
+            test("circles intersect", function () {
+                var circle1 = new geometry.Circle(10, 10, 15);
+                var circle2 = new geometry.Circle(20, 15, 10);
+                ok(circle1.intersectsCircle(circle2));
+                ok(circle2.intersectsCircle(circle1));
+            });
+
+            module("rectangle - rectangle intersection");
+
+            test("rectangles doesnt intersect", function () {
+                var rectangle1 = new geometry.Rectangle(10, 10, 10, 10);
+                var rectangle2 = new geometry.Rectangle(100, 100, 100, 100);
+                ok(!rectangle1.intersectsRectangle(rectangle2));
+                ok(!rectangle2.intersectsRectangle(rectangle1));
+            });
+
+            test("rectangle intersects itself", function () {
+                var rectangle1 = new geometry.Rectangle(10, 10, 10, 10);
+                ok(rectangle1.intersectsRectangle(rectangle1));
+            });
+
+            test("rectangle intersects inner and outer", function() {
+                var inner = new geometry.Rectangle(100, 100, 100, 100);
+                var outer = new geometry.Rectangle(50, 50, 200, 200);
+                ok(inner.intersectsRectangle(outer));
+                ok(outer.intersectsRectangle(inner));
+            });
+
+            test("rectangles intersect when touched by vertice", function () {
+                var rec1 = new geometry.Rectangle(100, 100, 100, 100);
+                var rec2 = new geometry.Rectangle(200, 200, 100, 100);
+
+                ok(rec1.intersectsRectangle(rec2));
+                ok(rec2.intersectsRectangle(rec1));
+            });
+
+            test("rectangles intersect when touched by edge", function () {
+                var rec1 = new geometry.Rectangle(100, 100, 100, 100);
+                var rec2 = new geometry.Rectangle(200, 100, 100, 100);
+
+                ok(rec1.intersectsRectangle(rec2));
+                ok(rec2.intersectsRectangle(rec1));
+            });
+
+            test("rectangles intersect", function () {
+                var rec1 = new geometry.Rectangle(100, 100, 200, 100);
+                var rec2 = new geometry.Rectangle(250, 180, 200, 100);
+                var rec3 = new geometry.Rectangle(270, 160, 100, 30);
+
+                ok(rec1.intersectsRectangle(rec2));
+                ok(rec1.intersectsRectangle(rec3));
+
+                ok(rec2.intersectsRectangle(rec1));
+                ok(rec2.intersectsRectangle(rec3));
+
+                ok(rec3.intersectsRectangle(rec1));
+                ok(rec3.intersectsRectangle(rec2));
             });
         });
     </script>
