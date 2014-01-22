@@ -73,8 +73,24 @@
             return intersects(circle, this);
         };
 
-        this.intersectsRectangle = function(rectangle) {
-            
+        this.containsPoint = function(x, y) {
+            return this.left <= x &&
+                   this.getRight() >= x &&
+                   this.top <= y &&
+                   this.getBottom() >= y;
+        };
+
+        this.intersectsRectangle = function (rectangle) {
+
+            function isInRange(x, rangeLeft, rangeRight) {
+                return rangeLeft <= x && x <= rangeRight;
+            }
+
+            return (isInRange(rectangle.left, this.left, this.getRight()) || isInRange(rectangle.getRight(), this.left, this.getRight())) &&
+                   (isInRange(rectangle.top, this.top, this.getBottom()) || isInRange(rectangle.getBottom(), this.top, this.getBottom()))
+                   ||
+                   (isInRange(this.left, rectangle.left, rectangle.getRight()) || isInRange(this.getRight(), rectangle.left, rectangle.getRight())) &&
+                   (isInRange(this.top, rectangle.top, rectangle.getBottom()) || isInRange(this.getBottom(), rectangle.top, rectangle.getBottom()));;
         };
     }
 
