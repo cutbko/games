@@ -7,9 +7,27 @@
 
 @section scripts
 {
+    <script src="~/Scripts/require.js" data-main="/Scripts/Modules/geometry.js"></script>
+
     <script>
-        test("hello test", function () {
-            ok(1 == "1", "Passed!");
+        require(['geometry'], function(geometry) {
+
+            test("circle doesnt intersect circle", function () {
+                var circle1 = new geometry.Circle(10, 10, 20);
+                var circle2 = new geometry.Circle(100, 100, 20);
+                ok(!circle1.intersectsCircle(circle2));
+                ok(!circle2.intersectsCircle(circle1));
+            });
+
+            test("circle intersects itself", function() {
+                var circle1 = new geometry.Circle(10, 10, 20);
+                ok(circle1.intersectsCircle(circle1));
+            });
+
+            test("circle intersects itself", function() {
+                var circle1 = new geometry.Circle(10, 10, 20);
+                ok(circle1.intersectsCircle(circle1));
+            });
         });
     </script>
 }
