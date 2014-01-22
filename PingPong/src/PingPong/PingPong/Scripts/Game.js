@@ -1,4 +1,14 @@
 ﻿var pingPongFactory = (function (jQuery, document) {
+
+    function intersects(circle, rectangle) {
+        
+    }
+
+    function Circle(x, y, radius) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
     
     function Rectangle(left, top, width, height) {
         this.left = left;
@@ -6,9 +16,17 @@
         this.width = width;
         this.height = height;
 
-        this.setPosition = function (x, y) {
-            this.left = x - width / 2;
-            this.top = y - height / 2;
+        this.setCenterPosition = function (x, y) {
+            this.left = x - this.width / 2;
+            this.top = y - this.height / 2;
+        };
+
+        this.getCenterX = function() {
+            return this.left + this.width / 2;
+        };
+
+        this.getCenterY = function() {
+            return this.top + this.height / 2;
         };
 
         this.offset = function(dx, dy) {
@@ -17,11 +35,11 @@
         };
 
         this.getBottom = function() {
-            return this.top + height;
+            return this.top + this.height;
         };
 
         this.getRight = function() {
-            return this.left + width;
+            return this.left + this.width;
         };
 
         this.setBottom = function(bottom) {
@@ -30,6 +48,23 @@
 
         this.setRight = function(right) {
             this.left = right - this.width;
+        };
+
+        this.intersectsCircle = function(rectangle) {
+            var circleDistanceX = Math.abs(rectangle.left + rectangle.width / 2 - this.left);
+            var circleDistanceY = Math.abs(rectangle.top + rectangle.width / 2 - this.top);
+
+            if (circleDistanceX > (this.width / 2 + rectangle.width / 2)) { return false; }
+            if (circleDistanceY > (this.height / 2 + rectangle.width / 2)) { return false; }
+
+            if (circleDistanceX <= (this.width / 2)) { return true; }
+            if (circleDistanceY <= (this.height / 2)) { return true; }
+
+            var cornerDistance_sq = (circleDistanceX - this.width / 2) ^ 2 +
+                                    (circleDistanceY - this.height / 2) ^ 2;
+
+            return cornerDistance_sq <= (Math.pow(rectangle.width / 2, 2));
+
         };
     }
 
@@ -94,8 +129,8 @@
         }
 
         this.rectangle = rectangle;
-        this.dx = 1300;
-        this.dy = 1300;
+        this.dx = 500;
+        this.dy = 500;
 
         this.update = function (elapsed) {
             this.rectangle.offset(this.dx * elapsed,
@@ -119,16 +154,18 @@
 
         var canvas = document.getElementById(canvasId);
 
-        var player1 = new Player(new Rectangle(10, 10, 10, 100));
-        var player2 = new Player(new Rectangle(100, 10, 10, 100));
+        var player1 = new Player(new Rectangle(0, 0, 10, 100));
+        player1.rectangle.setCenterPosition(canvas.width / 4, canvas.height / 2);
+        var player2 = new Player(new Rectangle(0, 0, 10, 100));
+        player1.rectangle.setCenterPosition(3 * canvas.width / 4, canvas.height / 2);
         var ball = new Ball(new Rectangle(50, 100, 50, 50));
         
         this.setPlayer1Position = function(x, y) {
-            player1.rectangle.setPosition(x, y);
+            player1.rectangle.setCenterPosition(x, y);
         };
 
         this.setPlayer2Position = function(x, y) {
-            player2.rectangle.setPosition(x, y);
+            player2.rectangle.setCenterPosition(x, y);
         };
 
         function getCenter() {
@@ -143,15 +180,40 @@
             ensureBallIsOnScreen();
             ensurePlayerIsOnItsSide(player1, new Rectangle(0, 0, getCenter(), canvas.height));
             ensurePlayerIsOnItsSide(player2, new Rectangle(getCenter(), 0, canvas.width / 2, canvas.height));
+
+            checkIfPlayerIntersectsBall(player1);
+            checkIfPlayerIntersectsBall(player2);
         };
+
+        function checkIfPlayerIntersectsBall(player) {
+            if (!player.rectangle.intersectsCircle(ball.rectangle)) {
+                return;
+            }
+
+            if (player.rectangle.getCenterX() < ball.rectangle.getCenterX()) {
+                ball.dx = Math.abs(ball.dx);
+            }
+
+            if (player.rectangle.getCenterX() > ball.rectangle.getCenterX()) {
+                ball.dx = -Math.abs(ball.dx);
+            }
+
+            if (player.rectangle.getCenterY() < ball.rectangle.getCenterY()) {
+                ball.dy= Math.abs(ball.dy);
+            }
+
+            if (player.rectangle.getCenterX() > ball.rectangle.getCenterX()) {
+                ball.dy = -Math.abs(ball.dy);
+            }
+        }
 
         function draw(context) {
 
             context.beginPath();
             context.lineWidth = "4";
             context.strokeStyle = "black";
+            
             context.rect(0, 0, canvas.width, canvas.height);
-            context.stroke();
 
             context.moveTo(getCenter() - 2, 0);
             context.lineTo(getCenter() - 2, canvas.height);
