@@ -1,0 +1,15 @@
+﻿@model dynamic
+@{
+    ViewBag.Title = "Geometry library tests";
+    Layout = "~/Views/Shared/_QUnitLayot.cshtml";
+}
+    <h2>Geometry library tests</h2>
+
+@section scripts
+{
+    <script>
+        test("hello test", function () {
+            ok(1 == "1", "Passed!");
+        });
+    </script>
+}
