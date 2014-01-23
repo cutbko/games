@@ -78,25 +78,21 @@
         };
 
         function checkIfPlayerIntersectsBall(player) {
-            if (player.rectangle.intersectsCircle(ball.circle)) {
+            if (!player.rectangle.intersectsCircle(ball.circle)) {
                 return;
             }
 
-            //if (player.rectangle.getCenterX() < ball.rectangle.getCenterX()) {
-            //    ball.dx = Math.abs(ball.dx);
-            //}
+            if (player.rectangle.getRight() <= ball.circle.x) {
+                ball.dx = Math.abs(ball.dx);
+            } else if (player.rectangle.left >= ball.circle.x) {
+                ball.dx = - Math.abs(ball.dx);
+            }
 
-            //if (player.rectangle.getCenterX() > ball.rectangle.getCenterX()) {
-            //    ball.dx = -Math.abs(ball.dx);
-            //}
-
-            //if (player.rectangle.getCenterY() < ball.rectangle.getCenterY()) {
-            //    ball.dy = Math.abs(ball.dy);
-            //}
-
-            //if (player.rectangle.getCenterX() > ball.rectangle.getCenterX()) {
-            //    ball.dy = -Math.abs(ball.dy);
-            //}
+            if (player.rectangle.top >= ball.circle.y) {
+                ball.dy = - Math.abs(ball.dy);
+            } else if (player.rectangle.getBottom() <= ball.circle.y) {
+                ball.dy = Math.abs(ball.dy);
+            }
         }
 
         function draw(context) {
