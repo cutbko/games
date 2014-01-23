@@ -1,18 +1,35 @@
 ﻿define(function () {
+
     function intersects(circle, rectangle) {
-        var circleDistanceX = Math.abs(circle.x - rectangle.left);
-        var circleDistanceY = Math.abs(circle.y - rectangle.top);
+        return rectangle.containsPoint(circle.x, circle.y) ||
+               distanceToSegment(circle, { x: rectangle.left, y: rectangle.top }, { x: rectangle.left, y: rectangle.getBottom() }) <= circle.radius ||
+               distanceToSegment(circle, { x: rectangle.left, y: rectangle.top }, { x: rectangle.getRight(), y: rectangle.top }) <= circle.radius ||
+               distanceToSegment(circle, { x: rectangle.getRight(), y: rectangle.getBottom() }, { x: rectangle.left, y: rectangle.getBottom() }) <= circle.radius ||
+               distanceToSegment(circle, { x: rectangle.getRight(), y: rectangle.getBottom() }, { x: rectangle.getRight(), y: rectangle.top }) <= circle.radius;
+    }
 
-        if (circleDistanceX > (rectangle.width / 2 + circle.radius)) { return false; }
-        if (circleDistanceY > (rectangle.height / 2 + circle.radius)) { return false; }
+    function sqr(x) {
+         return x * x;
+    }
 
-        if (circleDistanceX <= (rectangle.width / 2)) { return true; }
-        if (circleDistanceY <= (rectangle.height / 2)) { return true; }
+    function distanceSquared(v, w) {
+         return sqr(v.x - w.x) + sqr(v.y - w.y);
+    }
 
-        var cornerDistance_sq = (circleDistanceX - rectangle.width / 2) ^ 2 +
-                                (circleDistanceY - rectangle.height / 2) ^ 2;
+    function distanceToSegmentSquared(p, v, w) {
+        var l2 = distanceSquared(v, w);
+        if (l2 == 0) return distanceSquared(p, v);
+        var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+        if (t < 0) return distanceSquared(p, v);
+        if (t > 1) return distanceSquared(p, w);
+        return distanceSquared(p, {
+            x: v.x + t * (w.x - v.x),
+            y: v.y + t * (w.y - v.y)
+        });
+    }
 
-        return cornerDistance_sq <= circle.radius * circle.radius;
+    function distanceToSegment(p, v, w) {
+         return Math.sqrt(distanceToSegmentSquared(p, v, w));
     }
 
     function Circle(x, y, radius) {
@@ -21,7 +38,7 @@
         this.radius = radius;
 
         this.intersectsCircle = function(circle) {
-            return Math.sqrt(Math.pow(circle.x - this.x, 2) + Math.pow(circle.y - this.y, 2)) <= circle.radius + this.radius;
+            return Math.sqrt(distanceSquared(circle, this)) <= circle.radius + this.radius;
         };
 
         this.intersectsRectangle = function(rectangle) {

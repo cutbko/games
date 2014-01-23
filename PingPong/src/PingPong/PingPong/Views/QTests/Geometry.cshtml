@@ -118,6 +118,91 @@
                 ok(rec3.intersectsRectangle(rec1));
                 ok(rec3.intersectsRectangle(rec2));
             });
+
+            module("rectangle - circle intersection");
+
+            test("doesn't intersect", function() {
+                var rec = new geometry.Rectangle(100, 100, 100, 100);
+
+                var circleAtRight = new geometry.Circle(250, 150, 49);
+                var circleAtTop = new geometry.Circle(150, 50, 49);
+                var circleAtLeft = new geometry.Circle(50, 150, 49);
+                var circleAtBottom = new geometry.Circle(50, 150, 49);
+
+                var circleAtTopRight = new geometry.Circle(250, 50, 70);
+                var circleAtBottomRight = new geometry.Circle(250, 250, 70);
+                var circleAtTopLeft = new geometry.Circle(50, 50, 70);
+                var circleAtBottomLeft = new geometry.Circle(50, 250, 70);
+                
+                [circleAtRight, circleAtTop, circleAtLeft, circleAtBottom, circleAtTopRight, circleAtBottomRight, circleAtTopLeft, circleAtBottomLeft]
+                    .forEach(function (circle) {
+                        ok(!rec.intersectsCircle(circle));
+                        ok(!circle.intersectsRectangle(rec));
+                    });
+            });
+
+            test("circle touches one rectangle side", function () {
+                var rec = new geometry.Rectangle(100, 100, 100, 100);
+
+                var circleTop = new geometry.Circle(150, 75, 25);
+                var circleLeft = new geometry.Circle(75, 150, 25);
+                var circleBottom = new geometry.Circle(150, 225, 25);
+                var circleRight = new geometry.Circle(225, 150, 25);
+
+                [circleTop, circleLeft, circleBottom, circleRight]
+                    .forEach(function (circle) {
+                        ok(rec.intersectsCircle(circle));
+                        ok(circle.intersectsRectangle(rec));
+                    });
+            });
+
+            test("circle intersects one rectangle side", function () {
+                var rec = new geometry.Rectangle(100, 100, 100, 100);
+
+                var circleTop = new geometry.Circle(150, 75, 30);
+                var circleLeft = new geometry.Circle(75, 150, 30);
+                var circleBottom = new geometry.Circle(150, 225, 30);
+                var circleRight = new geometry.Circle(225, 150, 30);
+
+                [circleTop, circleLeft, circleBottom, circleRight]
+                    .forEach(function (circle) {
+                        ok(rec.intersectsCircle(circle));
+                        ok(circle.intersectsRectangle(rec));
+                    });
+            });
+
+            test("circle intersects two rectangle sides", function () {
+                var rec = new geometry.Rectangle(100, 100, 100, 100);
+
+                var circleTopLeft = new geometry.Circle(75, 75, 50);
+                var circleBottomLeft = new geometry.Circle(75, 225, 50);
+                var circleTopRight = new geometry.Circle(225, 75, 50);
+                var circleBottomRight = new geometry.Circle(225, 225, 50);
+
+                [circleTopLeft, circleBottomLeft, circleTopRight, circleBottomRight]
+                    .forEach(function (circle) {
+                        ok(rec.intersectsCircle(circle));
+                        ok(circle.intersectsRectangle(rec));
+                    });
+            });
+
+            test("circle inside rectangle", function () {
+                var rec = new geometry.Rectangle(100, 100, 100, 100);
+
+                var circle = new geometry.Circle(150, 150, 25);
+
+                ok(rec.intersectsCircle(circle));
+                ok(circle.intersectsRectangle(rec));
+            });
+
+            test("rectangle inside circle", function () {
+                var rec = new geometry.Rectangle(100, 100, 100, 100);
+
+                var circle = new geometry.Circle(150, 150, 100);
+
+                ok(rec.intersectsCircle(circle));
+                ok(circle.intersectsRectangle(rec));
+            });
         });
     </script>
 }
