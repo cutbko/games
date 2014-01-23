@@ -1,6 +1,10 @@
 ﻿define(["geometry", "gameEngineFactory"], function (geometry, gameEngineFactory) {
+    // consts
     var GAME_WIDTH = 16;
     var GAME_HEIGHT = 9;
+    var PLAYER_WIDTH = GAME_WIDTH / 64;
+    var PLAYER_HEIGHT = GAME_HEIGHT / 9;
+    var BALL_RADIUS = Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) / 64;
 
     var scale = 1;
 
@@ -47,11 +51,11 @@
 
         var canvas = document.getElementById(canvasId);
 
-        var player1 = new Player(new geometry.Rectangle(0, 0, GAME_WIDTH / 64, GAME_HEIGHT / 9));
+        var player1 = new Player(new geometry.Rectangle(0, 0, PLAYER_WIDTH, PLAYER_HEIGHT));
         player1.rectangle.setCenterPosition(GAME_WIDTH / 4, GAME_HEIGHT / 2);
-        var player2 = new Player(new geometry.Rectangle(0, 0, GAME_WIDTH / 64, GAME_HEIGHT / 9));
+        var player2 = new Player(new geometry.Rectangle(0, 0, PLAYER_WIDTH, PLAYER_HEIGHT));
         player2.rectangle.setCenterPosition(3 * GAME_WIDTH / 4, GAME_HEIGHT / 2);
-        var ball = new Ball(new geometry.Circle(GAME_WIDTH / 2, GAME_HEIGHT / 2, Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) / 64));
+        var ball = new Ball(new geometry.Circle(GAME_WIDTH / 2, GAME_HEIGHT / 2, BALL_RADIUS));
 
         console.log(player1.rectangle);
         console.log(player2.rectangle);
