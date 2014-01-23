@@ -5,15 +5,17 @@
 
 @section scripts
 {
-    <script src="~/Scripts/Game.js"></script>
+    <script src="~/Scripts/require.js" data-main="/Scripts/Modules/pingPongFactory.js"></script>
 
     <script>
-        $(document).ready(function () {
-            window.pingPongGame = pingPongFactory.init("gameCanvas");
+        $(document).ready(function() {
+            require(['pingPongFactory'], function(pingPongFactory) {
+                window.pingPongGame = pingPongFactory.create("gameCanvas");
 
-            resizeGame();
-            window.addEventListener('resize', resizeGame, false);
-            window.addEventListener('orientationchange', resizeGame, false);
+                resizeGame();
+                window.addEventListener('resize', resizeGame, false);
+                window.addEventListener('orientationchange', resizeGame, false);
+            });
         });
 
         function resizeGame() {

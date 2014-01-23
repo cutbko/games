@@ -37,6 +37,27 @@
         this.y = y;
         this.radius = radius;
 
+        this.getLeft = function() {
+            return this.x - this.radius;
+        };
+
+        this.getTop = function() {
+            return this.y - this.radius;
+        };
+
+        this.getRight = function() {
+            return this.x + this.radius;
+        };
+
+        this.getBottom = function() {
+            return this.y + this.radius;
+        };
+
+        this.offset = function (dx, dy) {
+            this.x += dx;
+            this.y += dy;
+        };
+
         this.intersectsCircle = function(circle) {
             return Math.sqrt(distanceSquared(circle, this)) <= circle.radius + this.radius;
         };
