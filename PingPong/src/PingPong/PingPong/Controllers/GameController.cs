@@ -4,7 +4,7 @@ using System.IO;
 using System.Web.Mvc;
 using MessagingToolkit.QRCode.Codec;
 
-namespace PingPong.Controllers
+namespace Games.Controllers
 {
     public class GameController : Controller
     {
