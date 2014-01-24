@@ -5,6 +5,8 @@
     var PLAYER_WIDTH = GAME_WIDTH / 64;
     var PLAYER_HEIGHT = GAME_HEIGHT / 9;
     var BALL_RADIUS = Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) / 64;
+    var BALL_SPEED_X = 3;
+    var BALL_SPEED_Y = 3;
 
     var scale = 1;
 
@@ -26,8 +28,8 @@
     function Ball(circle) {
 
         this.circle = circle;
-        this.dx = 5;
-        this.dy = 5;
+        this.dx = BALL_SPEED_X;
+        this.dy = BALL_SPEED_Y;
 
         this.update = function(elapsed) {
             this.circle.offset(this.dx * elapsed,
