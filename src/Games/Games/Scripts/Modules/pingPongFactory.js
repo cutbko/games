@@ -134,7 +134,7 @@
 
         function update(elapsed) {
             if (canvas.width / canvas.height - GAME_WIDTH / GAME_HEIGHT > 0.01) {
-                throw "canvas must be in proportion 16 : 9";
+                throw "canvas must be in proportion " + GAME_WIDTH + ":" + GAME_HEIGHT;
             }
 
             scale = canvas.width / GAME_WIDTH;
