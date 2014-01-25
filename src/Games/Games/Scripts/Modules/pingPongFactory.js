@@ -7,6 +7,10 @@
     var PLAYER_AREA_HEIGHT = GAME_HEIGHT;
     var PLAYER_WIDTH = GAME_WIDTH / 64;
     var PLAYER_HEIGHT = GAME_HEIGHT / 9;
+
+    var GOAL_WIDTH = GAME_WIDTH / 128;
+    var GOAL_HEIGHT = GAME_HEIGHT / 9;
+
     var BALL_RADIUS = Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) / 64;
 
     var BALL_SPEED_X = Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) / 30;
@@ -24,6 +28,40 @@
         }
 
         return value;
+    }
+
+    function GameBackground() {
+        this.update = function(elapsed) {
+        };
+
+        this.draw = function (context) {
+
+            context.beginPath();
+            context.lineWidth = "4";
+            context.strokeStyle = "black";
+
+            context.rect(0, 0, GAME_WIDTH * scale, GAME_HEIGHT * scale);
+
+            context.moveTo(GAME_WIDTH * scale / 2 - 2, 0);
+            context.lineTo(GAME_WIDTH * scale / 2 - 2, GAME_HEIGHT * scale);
+            context.stroke();
+
+        };
+    }
+
+    function Goal(rectangle) {
+        this.rectangle = rectangle;
+
+        this.update = function (elapsed) {
+        };
+
+        this.draw = function (context) {
+            context.beginPath();
+            context.lineWidth = "5";
+            context.strokeStyle = "black";
+            context.rect(this.rectangle.left * scale, this.rectangle.top * scale, this.rectangle.width * scale, this.rectangle.height * scale);
+            context.stroke();
+        };
     }
 
     function Player(rectangle) {
@@ -69,11 +107,21 @@
 
         var canvas = document.getElementById(canvasId);
 
+        var gameBackground = new GameBackground();
+
         var player1 = new Player(new geometry.Rectangle(0, 0, PLAYER_WIDTH, PLAYER_HEIGHT));
         player1.rectangle.setCenterPosition(GAME_WIDTH / 4, GAME_HEIGHT / 2);
+
         var player2 = new Player(new geometry.Rectangle(0, 0, PLAYER_WIDTH, PLAYER_HEIGHT));
         player2.rectangle.setCenterPosition(3 * GAME_WIDTH / 4, GAME_HEIGHT / 2);
+
         var ball = new Ball(new geometry.Circle(GAME_WIDTH / 2, GAME_HEIGHT / 2, BALL_RADIUS));
+
+        var goal1 = new Goal(new geometry.Rectangle(0, 0, GOAL_WIDTH, GOAL_HEIGHT));
+        goal1.rectangle.setCenterPosition(GOAL_WIDTH / 2, GAME_HEIGHT / 2);
+
+        var goal2 = new Goal(new geometry.Rectangle(0, 0, GOAL_WIDTH, GOAL_HEIGHT));
+        goal2.rectangle.setCenterPosition(GAME_WIDTH - GOAL_WIDTH / 2, GAME_HEIGHT / 2);
 
         this.setPlayer1Position = function(x, y) {
             player1.rectangle.setCenterPosition(getValueInRange(x, 0, 1) * PLAYER_AREA_WIDTH,
@@ -92,9 +140,14 @@
 
             scale = canvas.width / GAME_WIDTH;
 
+            gameBackground.update(elapsed);
+
             player1.update(elapsed);
             player2.update(elapsed);
             ball.update(elapsed);
+
+            goal1.update(elapsed);
+            goal2.update(elapsed);
 
             ensureBallIsOnScreen();
             ensurePlayerIsOnItsSide(player1, 0, GAME_WIDTH / 2);
@@ -123,16 +176,10 @@
         }
 
         function draw(context) {
+            gameBackground.draw(context);
 
-            context.beginPath();
-            context.lineWidth = "4";
-            context.strokeStyle = "black";
-
-            context.rect(0, 0, canvas.width, canvas.height);
-
-            context.moveTo(canvas.width / 2 - 2, 0);
-            context.lineTo(canvas.width / 2 - 2, canvas.height);
-            context.stroke();
+            goal1.draw(context);
+            goal2.draw(context);
 
             player1.draw(context);
             player2.draw(context);
