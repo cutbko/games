@@ -134,6 +134,14 @@
 
     return {
         Circle: Circle,
-        Rectangle: Rectangle
+
+        Rectangle: Rectangle,
+
+        CreateRectangleByCenter: function(x, y, width, height) {
+            var rec = new Rectangle(0, 0, width, height);
+            rec.setCenterPosition(x, y);
+
+            return rec;
+        }
     };
 });

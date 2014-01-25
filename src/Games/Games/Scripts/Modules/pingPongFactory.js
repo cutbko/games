@@ -13,8 +13,8 @@
 
     var BALL_RADIUS = Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) / 64;
 
-    var BALL_SPEED_X = Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) / 30;
-    var BALL_SPEED_Y = Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) / 30;
+    var BALL_SPEED_X = Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) / 3;
+    var BALL_SPEED_Y = Math.sqrt(GAME_WIDTH * GAME_WIDTH + GAME_HEIGHT * GAME_HEIGHT) / 3;
 
     var scale = 1;
 
@@ -64,13 +64,18 @@
         };
     }
 
-    function Player(rectangle) {
+    function Player(rectangle, goal) {
         this.rectangle = rectangle;
+        this.goal = goal;
+        this.score = 0;
 
-        this.update = function(elapsed) {
+        this.update = function (elapsed) {
+            this.goal.update(elapsed);
         };
 
-        this.draw = function(context) {
+        this.draw = function (context) {
+            this.goal.draw(context);
+
             context.beginPath();
             context.lineWidth = "5";
             context.strokeStyle = "black";
@@ -109,20 +114,14 @@
 
         var gameBackground = new GameBackground();
 
-        var player1 = new Player(new geometry.Rectangle(0, 0, PLAYER_WIDTH, PLAYER_HEIGHT));
-        player1.rectangle.setCenterPosition(GAME_WIDTH / 4, GAME_HEIGHT / 2);
+        var player1 = new Player(geometry.CreateRectangleByCenter(GAME_WIDTH / 4, GAME_HEIGHT / 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+                                 new Goal(geometry.CreateRectangleByCenter(GOAL_WIDTH / 2, GAME_HEIGHT / 2, GOAL_WIDTH, GOAL_HEIGHT)));
 
-        var player2 = new Player(new geometry.Rectangle(0, 0, PLAYER_WIDTH, PLAYER_HEIGHT));
-        player2.rectangle.setCenterPosition(3 * GAME_WIDTH / 4, GAME_HEIGHT / 2);
+        var player2 = new Player(geometry.CreateRectangleByCenter(3 * GAME_WIDTH / 4, GAME_HEIGHT / 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+                                 new Goal(geometry.CreateRectangleByCenter(GAME_WIDTH - GOAL_WIDTH / 2, GAME_HEIGHT / 2, GOAL_WIDTH, GOAL_HEIGHT)));
 
         var ball = new Ball(new geometry.Circle(GAME_WIDTH / 2, GAME_HEIGHT / 2, BALL_RADIUS));
-
-        var goal1 = new Goal(new geometry.Rectangle(0, 0, GOAL_WIDTH, GOAL_HEIGHT));
-        goal1.rectangle.setCenterPosition(GOAL_WIDTH / 2, GAME_HEIGHT / 2);
-
-        var goal2 = new Goal(new geometry.Rectangle(0, 0, GOAL_WIDTH, GOAL_HEIGHT));
-        goal2.rectangle.setCenterPosition(GAME_WIDTH - GOAL_WIDTH / 2, GAME_HEIGHT / 2);
-
+        
         this.setPlayer1Position = function(x, y) {
             player1.rectangle.setCenterPosition(getValueInRange(x, 0, 1) * PLAYER_AREA_WIDTH,
                                                 getValueInRange(y, 0, 1) * PLAYER_AREA_HEIGHT);
@@ -145,17 +144,25 @@
             player1.update(elapsed);
             player2.update(elapsed);
             ball.update(elapsed);
-
-            goal1.update(elapsed);
-            goal2.update(elapsed);
-
+            
             ensureBallIsOnScreen();
             ensurePlayerIsOnItsSide(player1, 0, GAME_WIDTH / 2);
             ensurePlayerIsOnItsSide(player2, GAME_WIDTH / 2, GAME_WIDTH);
 
             checkIfPlayerIntersectsBall(player1);
             checkIfPlayerIntersectsBall(player2);
+
+            checkIfBallIsInGoal(player1, player2);
+            checkIfBallIsInGoal(player2, player1);
         };
+
+        function checkIfBallIsInGoal(player, otherPlayer) {
+            if (ball.circle.intersectsRectangle(player.goal.rectangle)) {
+                otherPlayer.score++;
+                ball.circle.x = GAME_WIDTH / 2;
+                ball.circle.y = GAME_HEIGHT / 2;
+            }
+        }
 
         function checkIfPlayerIntersectsBall(player) {
             if (!player.rectangle.intersectsCircle(ball.circle)) {
@@ -177,10 +184,7 @@
 
         function draw(context) {
             gameBackground.draw(context);
-
-            goal1.draw(context);
-            goal2.draw(context);
-
+            
             player1.draw(context);
             player2.draw(context);
             ball.draw(context);
