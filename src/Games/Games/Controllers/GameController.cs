@@ -10,6 +10,7 @@ namespace Games.Controllers
     {
         public ActionResult Index()
         {
+            ViewBag.GameName = "Ping Pong";
             return View();
         }
 

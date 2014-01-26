@@ -6,3 +6,17 @@
 
 #gameCanvas {
 }
+
+.col-md-4 {
+    background-color: red;
+}
+
+@media (min-width: 992px) {
+    #player1Header {
+        text-align: right;
+    }
+
+    #gameTitle {
+        text-align: center;
+    }
+}
