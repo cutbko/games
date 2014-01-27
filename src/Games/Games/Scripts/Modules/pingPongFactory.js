@@ -45,7 +45,6 @@
             context.moveTo(GAME_WIDTH * scale / 2 - 2, 0);
             context.lineTo(GAME_WIDTH * scale / 2 - 2, GAME_HEIGHT * scale);
             context.stroke();
-
         };
     }
 
@@ -67,7 +66,16 @@
     function Player(rectangle, goal) {
         this.rectangle = rectangle;
         this.goal = goal;
-        this.score = 0;
+
+        var score = 0;
+
+        this.getScore = function() {
+            return score;
+        };
+
+        this.incrementScore = function() {
+            score++;
+        };
 
         this.update = function (elapsed) {
             this.goal.update(elapsed);
@@ -158,7 +166,7 @@
 
         function checkIfBallIsInGoal(player, otherPlayer) {
             if (ball.circle.intersectsRectangle(player.goal.rectangle)) {
-                otherPlayer.score++;
+                otherPlayer.incrementScore();
                 ball.circle.x = GAME_WIDTH / 2;
                 ball.circle.y = GAME_HEIGHT / 2;
             }
