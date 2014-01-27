@@ -1,12 +1,4 @@
-﻿#gameArea {
-    position: absolute;
-    left: 0;
-    top: 0;
-}
-
-#gameCanvas {
-}
-
+﻿/*HEADER STYLES*/
 .col-md-4 {
     background-color: red;
 }
@@ -19,4 +11,22 @@
     #gameTitle {
         text-align: center;
     }
+}
+
+/*GAME STYLES*/
+#gameArea {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.playerLogin {
+    position: absolute;
+    background-color: white;
+    left: 0;
+    right: 0;
+}
+
+.playerLoginContent {
+    position: relative;
 }
