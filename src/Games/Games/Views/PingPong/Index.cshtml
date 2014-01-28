@@ -18,6 +18,8 @@
 {
     <script src="~/Scripts/require.js" data-main="/Scripts/Modules/pingPongFactory.js"></script>
     <script>
+        var serverSocketChannelUri = '@Url.Action("Subscribe", "PingPong", new {}, "ws")';
+
         $(document).ready(function () {
             require(['pingPongFactory'], function (pingPongFactory) {
                 window.pingPongGame = pingPongFactory.create("gameCanvas");

@@ -6,7 +6,7 @@ using MessagingToolkit.QRCode.Codec;
 
 namespace Games.Controllers
 {
-    public class GameController : Controller
+    public class PingPongController : Controller
     {
         public ActionResult Index()
         {
@@ -14,6 +14,10 @@ namespace Games.Controllers
             return View();
         }
 
+        //public HttpResponseMessage Subscribe()
+        //{
+        //}
+        
         public ActionResult PlayerJoin(byte playerId)
         {
             return View("PlayerControl");
@@ -21,12 +25,12 @@ namespace Games.Controllers
 
         public ActionResult Player1JoinQr()
         {
-            return Qr(Url.Action("PlayerJoin", "Game", new { playerId = 1 }, Request.Url.Scheme));
+            return Qr(Url.Action("PlayerJoin", "PingPong", new { playerId = 1 }, Request.Url.Scheme));
         }
         
         public ActionResult Player2JoinQr()
         {
-            return Qr(Url.Action("PlayerJoin", "Game", new { playerId = 1 }, Request.Url.Scheme));
+            return Qr(Url.Action("PlayerJoin", "PingPong", new { playerId = 2 }, Request.Url.Scheme));
         }
 
         private ActionResult Qr(string uri)
