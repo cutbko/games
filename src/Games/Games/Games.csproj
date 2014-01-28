@@ -43,6 +43,9 @@
       <HintPath>..\packages\MessagingToolkit.QRCode.1.3.0\lib\MessagingToolkit.QRCode.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.WebSockets">
+      <HintPath>..\packages\Microsoft.WebSockets.0.2.3\lib\net45\Microsoft.WebSockets.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />

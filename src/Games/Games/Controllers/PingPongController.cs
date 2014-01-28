@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Web.Mvc;
@@ -8,9 +9,13 @@ namespace Games.Controllers
 {
     public class PingPongController : Controller
     {
+        private static readonly Random _rng = new Random();
+        private const string _chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
         public ActionResult Index()
         {
             ViewBag.GameName = "Ping Pong";
+            ViewBag.GameId = RandomString(5);
             return View();
         }
 
@@ -18,19 +23,19 @@ namespace Games.Controllers
         //{
         //}
         
-        public ActionResult PlayerJoin(byte playerId)
+        public ActionResult PlayerJoin(string gameId, byte playerId)
         {
             return View("PlayerControl");
         }
 
-        public ActionResult Player1JoinQr()
+        public ActionResult Player1JoinQr(string gameId)
         {
-            return Qr(Url.Action("PlayerJoin", "PingPong", new { playerId = 1 }, Request.Url.Scheme));
+            return Qr(Url.Action("PlayerJoin", "PingPong", new { gameId = gameId, playerId = 1 }, Request.Url.Scheme));
         }
-        
-        public ActionResult Player2JoinQr()
+
+        public ActionResult Player2JoinQr(string gameId)
         {
-            return Qr(Url.Action("PlayerJoin", "PingPong", new { playerId = 2 }, Request.Url.Scheme));
+            return Qr(Url.Action("PlayerJoin", "PingPong", new { gameId = gameId, playerId = 2 }, Request.Url.Scheme));
         }
 
         private ActionResult Qr(string uri)
@@ -42,6 +47,18 @@ namespace Games.Controllers
             memoryStream.Position = 0;
 
             return File(memoryStream, "image/png");
+        }
+        
+        private static string RandomString(int size)
+        {
+            var buffer = new char[size];
+
+            for (int i = 0; i < size; i++)
+            {
+                buffer[i] = _chars[_rng.Next(_chars.Length)];
+            }
+
+            return new string(buffer);
         }
     }
 }
