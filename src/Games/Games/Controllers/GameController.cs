@@ -14,15 +14,30 @@ namespace Games.Controllers
             return View();
         }
 
-        public ActionResult Qr()
+        public ActionResult PlayerJoin(byte playerId)
+        {
+            return View("PlayerControl");
+        }
+
+        public ActionResult Player1JoinQr()
+        {
+            return Qr(Url.Action("PlayerJoin", "Game", new { playerId = 1 }, Request.Url.Scheme));
+        }
+        
+        public ActionResult Player2JoinQr()
+        {
+            return Qr(Url.Action("PlayerJoin", "Game", new { playerId = 1 }, Request.Url.Scheme));
+        }
+
+        private ActionResult Qr(string uri)
         {
             var qrCodeEncoder = new QRCodeEncoder();
-            Bitmap bitmap = qrCodeEncoder.Encode("http://google.com/");
+            Bitmap bitmap = qrCodeEncoder.Encode(uri);
             var memoryStream = new MemoryStream();
             bitmap.Save(memoryStream, ImageFormat.Png);
             memoryStream.Position = 0;
 
-            return File(memoryStream, "image/png", "Zalupa");
+            return File(memoryStream, "image/png");
         }
     }
 }
