@@ -18,9 +18,9 @@
 {
     <script src="~/Scripts/require.js" data-main="/Scripts/Modules/pingPongFactory.js"></script>
     <script>
-        var serverSocketChannelUri = '@Url.Action("Subscribe", "PingPong", new RouteValueDictionary { { "gameId", ViewBag.GameId } }, "ws", Request.Url.Host + ":" + Request.Url.Port)';
+        var serverSocketChannelUri = 'ws://@Request.Url.Host:@Request.Url.Port' + '@Url.HttpRouteUrl("DefaultApi", new { controller = "PingPongApi", gameId = ViewBag.GameId })';
 
-        $(document).ready(function () {
+        $(document).ready(function () { 
 
             require(['pingPongFactory'], function (pingPongFactory) {
                 window.pingPongGame = pingPongFactory.create("gameCanvas");
@@ -28,20 +28,22 @@
                 resizeGame();
                 window.addEventListener('resize', resizeGame, false);
                 window.addEventListener('orientationchange', resizeGame, false);
-
                 
-                //var ws = new WebSocket(serverSocketChannelUri);
-                //ws.onopen = function () {
-                //    console.log('open');
-                //};
+                var ws = new WebSocket(serverSocketChannelUri);
+                ws.onopen = function () {
+                    console.log('open');
+                };
 
-                //ws.onmessage = function (event) {
-                //    console.log(event);
-                //};
+                ws.onmessage = function (event) {
+                    console.log(event.data);
+                };
 
-                //ws.onerror = function (event) {
-                //    console.log(event);
-                //};
+                ws.onerror = function (event) {
+                    console.log('error');
+                    console.log(event);
+                };
+
+                //prompt('her', '@ViewBag.GameId');
             });
         });
 

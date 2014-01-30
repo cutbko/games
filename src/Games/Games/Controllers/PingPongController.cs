@@ -17,49 +17,29 @@ namespace Games.Controllers
         private static readonly Random _rng = new Random();
         private const string _chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-        private static readonly ConcurrentDictionary<string, GameWebSocketHandler> _gameWebSocketHandlers = 
-                            new ConcurrentDictionary<string, GameWebSocketHandler>();
-
-        public ActionResult Index()
+        public ViewResult Index()
         {
             ViewBag.GameName = "Ping Pong";
             ViewBag.GameId = RandomString(5);
-            _gameWebSocketHandlers.TryAdd(ViewBag.GameId, new GameWebSocketHandler());
             return View();
         }
 
-        public HttpResponseMessage Subscribe(string gameId)
+        public ViewResult PlayerControl(string gameId, int playerId)
         {
-            GameWebSocketHandler handler;
-            if (_gameWebSocketHandlers.TryGetValue(gameId, out handler))
-            {
-                System.Web.HttpContext.Current.AcceptWebSocketRequest(handler);
-                return new HttpResponseMessage(HttpStatusCode.SwitchingProtocols);
-            }
+            ViewBag.GameId = gameId;
+            ViewBag.PlayerId = playerId;
 
-            return new HttpResponseMessage(HttpStatusCode.NotFound);
-        }
-        
-        public ActionResult PlayerJoin(string gameId, byte playerId)
-        {
-            GameWebSocketHandler handler;
-            if (_gameWebSocketHandlers.TryGetValue(gameId, out handler))
-            {
-                handler.PlayerJoined(playerId);
-                return View("PlayerControl");
-            }
-
-            return HttpNotFound();
+            return View("PlayerControl");
         }
 
         public ActionResult Player1JoinQr(string gameId)
         {
-            return Qr(Url.Action("PlayerJoin", "PingPong", new { gameId = gameId, playerId = 1 }, Request.Url.Scheme));
+            return Qr(Url.Action("PlayerControl", "PingPong", new { gameId = gameId, playerId = 1 }, Request.Url.Scheme));
         }
 
         public ActionResult Player2JoinQr(string gameId)
         {
-            return Qr(Url.Action("PlayerJoin", "PingPong", new { gameId = gameId, playerId = 2 }, Request.Url.Scheme));
+            return Qr(Url.Action("PlayerControl", "PingPong", new { gameId = gameId, playerId = 2 }, Request.Url.Scheme));
         }
 
         private ActionResult Qr(string uri)
@@ -83,15 +63,6 @@ namespace Games.Controllers
             }
 
             return new string(buffer);
-        }
-
-        class GameWebSocketHandler : WebSocketHandler
-        {
-            public void PlayerJoined(int playerId)
-            {
-                string playerJoinEncoded = System.Web.Helpers.Json.Encode(new PlayerJoinAction { PlayerId = playerId });
-                Send(playerJoinEncoded);
-            }
         }
     }
 }

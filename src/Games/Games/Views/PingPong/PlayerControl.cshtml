@@ -11,7 +11,14 @@
     <title>PlayerControl</title>
 </head>
 <body>
-    <div> 
+    <div>
     </div>
+    @Scripts.Render("~/bundles/jquery")
+    
+    <script>
+        $(document).ready(function () {
+            $.get('@Request.Url.Scheme://@Request.Url.Host:@Request.Url.Port' + '@Url.HttpRouteUrl("DefaultApi", new { controller = "PingPongApi" })/PlayerJoined?gameId=@ViewBag.GameId&playerId=@ViewBag.PlayerId');
+        });
+    </script>
 </body>
 </html>
