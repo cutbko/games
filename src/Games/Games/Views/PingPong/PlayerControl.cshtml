@@ -16,7 +16,7 @@
     @Scripts.Render("~/bundles/jquery")
     
     <script>
-        var serverSocketChannelUri = 'ws://@Request.Url.Host:@Request.Url.Port' + '@Url.HttpRouteUrl("DefaultApi", new { controller = "PingPongApi", action = "ConnectPlayer", gameId = ViewBag.GameId, playerId = ViewBag.PlayerId })';
+        var serverSocketChannelUri = ('ws://@Request.Url.Host:@Request.Url.Port' + '@Url.HttpRouteUrl("DefaultApi", new { controller = "PingPongApi", action = "ConnectPlayer", gameId = ViewBag.GameId, playerId = ViewBag.PlayerId })').replace('&amp;', '&');
 
         $(document).ready(function () {
             var ws = new WebSocket(serverSocketChannelUri);
