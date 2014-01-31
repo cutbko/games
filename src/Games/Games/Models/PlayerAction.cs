@@ -1,7 +1,13 @@
-﻿namespace Games.Models
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace Games.Models
 {
     public abstract class PlayerAction
     {
-         public abstract PlayerActionType ActionType { get; }
+        [JsonConverter(typeof (StringEnumConverter))]
+        public abstract PlayerActionType ActionType { get; }
+
+        public int PlayerId { get; set; }
     }
 }

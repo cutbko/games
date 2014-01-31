@@ -1,9 +1,12 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using Games.Models;
+using Games.Models.WebSockets;
+using Games.Models.WebSockets.Game;
 using Microsoft.Web.WebSockets;
 
 namespace Games.Controllers
@@ -37,15 +40,6 @@ namespace Games.Controllers
             }
 
             return Request.CreateResponse(HttpStatusCode.NotFound);
-        }
-
-        class GameWebSocketHandler : WebSocketHandler
-        {
-            public void PlayerJoined(int playerId)
-            {
-                string playerJoinEncoded = System.Web.Helpers.Json.Encode(new PlayerJoinAction { PlayerId = playerId });
-                Send(playerJoinEncoded);
-            }
         }
     }
 }

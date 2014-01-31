@@ -144,7 +144,15 @@
     <Compile Include="Models\PlayerAction.cs" />
     <Compile Include="Models\PlayerActionType.cs" />
     <Compile Include="Models\PlayerJoinAction.cs" />
+    <Compile Include="Models\PlayerLeftAction.cs" />
     <Compile Include="Models\PlayerMoveAction.cs" />
+    <Compile Include="Models\PlayerPosition.cs" />
+    <Compile Include="Models\WebSockets\Communications\GameCommunicator.cs" />
+    <Compile Include="Models\WebSockets\Communications\IGameCommunicator.cs" />
+    <Compile Include="Models\WebSockets\Game\GameWebSocketHandler.cs" />
+    <Compile Include="Models\WebSockets\Game\IGameWebSocketHandler.cs" />
+    <Compile Include="Models\WebSockets\Player\IPlayerWebSocketHandler.cs" />
+    <Compile Include="Models\WebSockets\Player\PlayerWebSocketHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

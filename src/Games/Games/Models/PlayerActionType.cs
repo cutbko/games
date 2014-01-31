@@ -3,7 +3,7 @@
     public enum PlayerActionType
     {
         Join,
-
+        Left,
         Move
     }
 }

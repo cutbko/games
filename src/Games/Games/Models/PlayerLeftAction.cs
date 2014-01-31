@@ -1,10 +1,10 @@
 ﻿namespace Games.Models
 {
-    public class PlayerJoinAction : PlayerAction
+    public class PlayerLeftAction : PlayerAction
     {
         public override PlayerActionType ActionType
         {
-            get { return PlayerActionType.Join; }
+            get { return PlayerActionType.Left; }
         }
     }
 }
