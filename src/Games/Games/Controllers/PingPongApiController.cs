@@ -1,42 +1,36 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
-using Games.Models;
-using Games.Models.WebSockets;
-using Games.Models.WebSockets.Game;
+using Games.Models.WebSockets.Communications;
 using Microsoft.Web.WebSockets;
 
 namespace Games.Controllers
 {
     public class PingPongApiController : ApiController
     {
-        private static readonly ConcurrentDictionary<string, GameWebSocketHandler> _gameWebSocketHandlers =
-                            new ConcurrentDictionary<string, GameWebSocketHandler>();
+        private static readonly ConcurrentDictionary<string, IGameCommunicator> _games =
+                            new ConcurrentDictionary<string, IGameCommunicator>();
 
-        public HttpResponseMessage Get(string gameId)
+        public HttpResponseMessage ConnectGame(string gameId)
         {
-            if (HttpContext.Current.IsWebSocketRequest && _gameWebSocketHandlers.TryAdd(gameId, new GameWebSocketHandler()))
+            if (HttpContext.Current.IsWebSocketRequest && _games.TryAdd(gameId, new GameCommunicator(2)))
             {
-                HttpContext.Current.AcceptWebSocketRequest(_gameWebSocketHandlers[gameId]);
-
+                HttpContext.Current.AcceptWebSocketRequest(_games[gameId].GameWebSocketHandler);
                 return Request.CreateResponse(HttpStatusCode.SwitchingProtocols);
             }
 
             return Request.CreateErrorResponse(HttpStatusCode.Conflict, "game has been already connected to the server");
         }
 
-        [HttpGet]
-        [ActionName("PlayerJoined")]
-        public HttpResponseMessage PlayerJoined(string gameId, int playerId)
+        public HttpResponseMessage ConnectPlayer(string gameId, int playerId)
         {
-            GameWebSocketHandler handler;
-            if (_gameWebSocketHandlers.TryGetValue(gameId, out handler))
+            IGameCommunicator gameCommunicator;
+            if (_games.TryGetValue(gameId, out gameCommunicator))
             {
-                handler.PlayerJoined(playerId);
-                return Request.CreateResponse(HttpStatusCode.OK);
+                HttpContext.Current.AcceptWebSocketRequest(gameCommunicator.GetPlayerWebSocketHandler(playerId));
+                return Request.CreateResponse(HttpStatusCode.SwitchingProtocols);
             }
 
             return Request.CreateResponse(HttpStatusCode.NotFound);
