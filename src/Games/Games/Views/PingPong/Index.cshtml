@@ -36,14 +36,20 @@
 
                 ws.onmessage = function (event) {
                     console.log(event.data);
+                    var serverEvent = JSON.parse(event.data);
+                    if (serverEvent.ActionType == "Join") {
+                        if (serverEvent.PlayerId == 1) {
+                            hidePlayer1Login();
+                        } else if (serverEvent.PlayerId == 2) {
+                            hidePlayer2Login();
+                        }
+                    }
                 };
 
                 ws.onerror = function (event) {
                     console.log('error');
                     console.log(event);
                 };
-
-                //prompt('her', '@ViewBag.GameId');
             });
         });
 
