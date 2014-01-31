@@ -13,6 +13,7 @@ namespace Games.Controllers
         private static readonly ConcurrentDictionary<string, IGameCommunicator> _games =
                             new ConcurrentDictionary<string, IGameCommunicator>();
 
+        [HttpGet]
         public HttpResponseMessage ConnectGame(string gameId)
         {
             if (HttpContext.Current.IsWebSocketRequest && _games.TryAdd(gameId, new GameCommunicator(2)))
@@ -24,6 +25,7 @@ namespace Games.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.Conflict, "game has been already connected to the server");
         }
 
+        [HttpGet]
         public HttpResponseMessage ConnectPlayer(string gameId, int playerId)
         {
             IGameCommunicator gameCommunicator;

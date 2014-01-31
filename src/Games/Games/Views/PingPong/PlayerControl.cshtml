@@ -16,8 +16,10 @@
     @Scripts.Render("~/bundles/jquery")
     
     <script>
+        var serverSocketChannelUri = 'ws://@Request.Url.Host:@Request.Url.Port' + '@Url.HttpRouteUrl("DefaultApi", new { controller = "PingPongApi", action = "ConnectPlayer", gameId = ViewBag.GameId, playerId = ViewBag.PlayerId })';
+
         $(document).ready(function () {
-            $.get('@Request.Url.Scheme://@Request.Url.Host:@Request.Url.Port' + '@Url.HttpRouteUrl("DefaultApi", new { controller = "PingPongApi" })/PlayerJoined?gameId=@ViewBag.GameId&playerId=@ViewBag.PlayerId');
+            var ws = new WebSocket(serverSocketChannelUri);
         });
     </script>
 </body>

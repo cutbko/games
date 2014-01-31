@@ -9,14 +9,8 @@ namespace Games
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
-                name: "DefaultApiWithAction",
-                routeTemplate: "api/{controller}/{action}/",
-                defaults: new { id = RouteParameter.Optional }
-            );
-
-            config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/",
+                routeTemplate: "api/{controller}/{action}/",
                 defaults: new { id = RouteParameter.Optional }
             );
         }
