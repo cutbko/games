@@ -32,19 +32,15 @@ namespace Games.Controllers
             return View("PlayerControl");
         }
 
-        public ActionResult Player1JoinQr(string gameId)
+        public ActionResult PlayerJoinQr(string gameId, int playerId)
         {
-            return Qr(Url.Action("PlayerControl", "PingPong", new { gameId = gameId, playerId = 1 }, Request.Url.Scheme));
-        }
-
-        public ActionResult Player2JoinQr(string gameId)
-        {
-            return Qr(Url.Action("PlayerControl", "PingPong", new { gameId = gameId, playerId = 2 }, Request.Url.Scheme));
+            return Qr(Url.Action("PlayerControl", "PingPong", new { gameId = gameId, playerId = playerId }, Request.Url.Scheme));
         }
 
         private ActionResult Qr(string uri)
         {
             var qrCodeEncoder = new QRCodeEncoder();
+            
             Bitmap bitmap = qrCodeEncoder.Encode(uri);
             var memoryStream = new MemoryStream();
             bitmap.Save(memoryStream, ImageFormat.Png);

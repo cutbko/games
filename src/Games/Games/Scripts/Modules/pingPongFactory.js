@@ -30,6 +30,33 @@
         return value;
     }
 
+    function LoginControl(qrCodeUri, rectangle) {
+        var self = this;
+        self.isImageLoaded = false;
+        self.left = 0;
+        self.top = 0;
+        self.isVisible = true;
+
+        var img = new Image;
+        img.onload = function () {
+            self.isImageLoaded = true;
+        };
+
+        img.src = qrCodeUri;
+
+        this.update = function (elapsed) {
+            if (self.isImageLoaded && self.isVisible) {
+                console.log(img);
+            }
+        };
+
+        this.draw = function (context) {
+            if (self.isImageLoaded && self.isVisible) {
+                context.drawImage(img, self.left, self.top);
+            }
+        };
+    }
+
     function GameBackground() {
         this.update = function(elapsed) {
         };
@@ -116,7 +143,7 @@
         };
     }
 
-    function PingPong(canvasId) {
+    function PingPong(canvasId, playerQrUri) {
 
         var canvas = document.getElementById(canvasId);
 
@@ -239,8 +266,8 @@
     }
 
     return {
-        create: function(canvasId) {
-            return new PingPong(canvasId);
+        create: function(canvasId, playerQrUri) {
+            return new PingPong(canvasId, playerQrUri);
         }
     };
 });

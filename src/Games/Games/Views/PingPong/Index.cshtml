@@ -1,17 +1,9 @@
-﻿<div id="gameArea">
+﻿@{
+    var playerQrCodeUri = Url.Action("PlayerJoinQr", "PingPong", new {gameId = ViewBag.GameId}, Request.Url.Scheme);
+}
+
+<div id="gameArea">
     <canvas id="gameCanvas" width="0" height="0" style="background-color: gray"></canvas>
-</div>
-
-<div id="player1Login" class ="playerLogin">
-    <div id="player1LoginContent" class="playerLoginContent">
-        <img src="@Url.Action("Player1JoinQr", new { gameId = ViewBag.GameId })" alt="assa" />
-    </div>
-</div>
-
-<div id="player2Login" class="playerLogin">
-    <div id="player2LoginContent" class="playerLoginContent">
-        <img src="@Url.Action("Player2JoinQr", new { gameId = ViewBag.GameId })" alt="assa" />
-    </div>
 </div>
 
 @section scripts
@@ -23,7 +15,7 @@
         $(document).ready(function () {
 
             require(['pingPongFactory'], function (pingPongFactory) {
-                window.pingPongGame = pingPongFactory.create("gameCanvas");
+                window.pingPongGame = pingPongFactory.create('gameCanvas', '@playerQrCodeUri');
 
                 resizeGame();
                 window.addEventListener('resize', resizeGame, false);
@@ -66,11 +58,6 @@
     }
 
     function resizeGame() {
-        var player1Login = document.getElementById('player1Login');
-        var player2Login = document.getElementById('player2Login');
-
-        var player1LoginContent = document.getElementById('player1LoginContent');
-        var player2LoginContent = document.getElementById('player2LoginContent');
 
         var header = document.querySelector('header');
         var gameArea = document.getElementById('gameArea');
@@ -90,10 +77,6 @@
             gameArea.style.height = newHeight + 'px';
             gameArea.style.left = "0px";
         }
-
-        player1Login.style.height = player2Login.style.height = (window.innerHeight - header.offsetHeight) + 'px';
-        player1Login.style.top = player2Login.style.top = header.offsetHeight + 'px';
-        player1Login.style.width = player2Login.style.left = player2Login.style.width = window.innerWidth / 2 + 'px';
 
         gameArea.style.top = header.offsetHeight + 'px';
 
