@@ -30,30 +30,63 @@
         return value;
     }
 
-    function LoginControl(qrCodeUri, rectangle) {
+    function PlayerLoginControl(qrCodeUri, rectangle) {
         var self = this;
-        self.isImageLoaded = false;
-        self.left = 0;
-        self.top = 0;
+        self.rectangle = rectangle;
         self.isVisible = true;
+
+        var isImageLoaded = false;
+        var left = 0;
+        var top = 0;
 
         var img = new Image;
         img.onload = function () {
-            self.isImageLoaded = true;
+            isImageLoaded = true;
         };
 
         img.src = qrCodeUri;
 
         this.update = function (elapsed) {
-            if (self.isImageLoaded && self.isVisible) {
-                console.log(img);
+            if (isImageLoaded && self.isVisible) {
+                left = rectangle.left + (rectangle.width - img.width / scale) / 2;
+                top = rectangle.top + (rectangle.height - img.height / scale) / 2;
             }
         };
 
         this.draw = function (context) {
-            if (self.isImageLoaded && self.isVisible) {
-                context.drawImage(img, self.left, self.top);
+            if (isImageLoaded && self.isVisible) {
+                context.clearRect(rectangle.left * scale, rectangle.top * scale, rectangle.width * scale, rectangle.height * scale);
+                context.drawImage(img, left * scale, top * scale);
             }
+        };
+    }
+
+    function LoginControl(playerQrUri, loginManager) {
+        var player1LoginControl = new PlayerLoginControl(playerQrUri + '&playerId=1', new geometry.Rectangle(0, 0, GAME_WIDTH / 2, GAME_HEIGHT));
+        var player2LoginControl = new PlayerLoginControl(playerQrUri + '&playerId=2', new geometry.Rectangle(GAME_WIDTH / 2, 0, GAME_WIDTH / 2, GAME_HEIGHT));
+
+        var loginControlMovingSpeed = 5;
+
+        this.update = function (elapsed) {
+            if (loginManager.isPlayer1InGame() && player1LoginControl.rectangle.getRight() > 0) {
+                player1LoginControl.rectangle.left -= loginControlMovingSpeed * elapsed;
+            } else if (!loginManager.isPlayer1InGame() && player1LoginControl.rectangle.left < 0) {
+                player1LoginControl.rectangle.left += loginControlMovingSpeed * elapsed;
+            }
+
+            if (loginManager.isPlayer2InGame() && player2LoginControl.rectangle.left < GAME_WIDTH) {
+                player2LoginControl.rectangle.left += loginControlMovingSpeed * elapsed;
+            } else if (!loginManager.isPlayer2InGame() && player2LoginControl.rectangle.left > GAME_WIDTH / 2) {
+                player2LoginControl.rectangle.left -= loginControlMovingSpeed * elapsed;
+            }
+
+            player1LoginControl.update(elapsed);
+            player2LoginControl.update(elapsed);
+        };
+
+        this.draw = function (context) {
+            player1LoginControl.draw(context);
+            player2LoginControl.draw(context);
         };
     }
 
@@ -143,7 +176,40 @@
         };
     }
 
+    function LoginManager() {
+        var player1InGame = false;
+        var player2InGame = false;
+
+        this.player1Joined = function () {
+            player1InGame = true;
+        };
+
+        this.player1Left = function () {
+            player1InGame = false;
+        };
+
+        this.player2Joined = function () {
+            player2InGame = true;
+        };
+
+        this.player2Left = function () {
+            player2InGame = false;
+        };
+
+        this.isPlayer1InGame = function() {
+            return player1InGame;
+        };
+
+        this.isPlayer2InGame = function() {
+            return player2InGame;
+        };
+    }
+
     function PingPong(canvasId, playerQrUri) {
+
+        this.loginManager = new LoginManager();
+
+        var loginControl = new LoginControl(playerQrUri, this.loginManager);
 
         var canvas = document.getElementById(canvasId);
 
@@ -175,6 +241,8 @@
             scale = canvas.width / GAME_WIDTH;
 
             gameBackground.update(elapsed);
+
+            loginControl.update(elapsed);
 
             player1.update(elapsed);
             player2.update(elapsed);
@@ -219,10 +287,10 @@
 
         function draw(context) {
             gameBackground.draw(context);
-            
             player1.draw(context);
             player2.draw(context);
             ball.draw(context);
+            loginControl.draw(context);
         };
 
         function ensureBallIsOnScreen() {

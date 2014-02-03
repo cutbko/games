@@ -3,7 +3,7 @@
 }
 
 <div id="gameArea">
-    <canvas id="gameCanvas" width="0" height="0" style="background-color: gray"></canvas>
+    <canvas id="gameCanvas" width="0" height="0"></canvas>
 </div>
 
 @section scripts
@@ -12,9 +12,9 @@
     <script>
         var serverSocketChannelUri = 'ws://@Request.Url.Host:@Request.Url.Port' + '@Url.HttpRouteUrl("DefaultApi", new { controller = "PingPongApi", action = "ConnectGame", gameId = ViewBag.GameId })';
 
-        $(document).ready(function () {
+        $(document).ready(function() {
 
-            require(['pingPongFactory'], function (pingPongFactory) {
+            require(['pingPongFactory'], function(pingPongFactory) {
                 window.pingPongGame = pingPongFactory.create('gameCanvas', '@playerQrCodeUri');
 
                 resizeGame();
@@ -22,40 +22,34 @@
                 window.addEventListener('orientationchange', resizeGame, false);
 
                 var ws = new WebSocket(serverSocketChannelUri);
-                ws.onopen = function () {
+                ws.onopen = function() {
                     console.log('open');
                 };
 
-                ws.onmessage = function (event) {
+                ws.onmessage = function(event) {
                     console.log(event.data);
                     var serverEvent = JSON.parse(event.data);
-                    if (serverEvent.ActionType == "Join") {
+                    if (serverEvent.ActionType == 'Join') {
                         if (serverEvent.PlayerId == 1) {
-                            hidePlayer1Login();
+                            pingPongGame.loginManager.player1Joined();
                         } else if (serverEvent.PlayerId == 2) {
-                            hidePlayer2Login();
+                            pingPongGame.loginManager.player2Joined();
+                        }
+                    } else if (serverEvent.ActionType == 'Left') {
+                        if (serverEvent.PlayerId == 1) {
+                            pingPongGame.loginManager.player1Left();
+                        } else if (serverEvent.PlayerId == 2) {
+                            pingPongGame.loginManager.player1Left();
                         }
                     }
                 };
 
-                ws.onerror = function (event) {
+                ws.onerror = function(event) {
                     console.log('error');
                     console.log(event);
                 };
             });
         });
-
-    function hidePlayer1Login() {
-        $("#player1Login").animate({ left: "-1000px" }, 1000, function () {
-            $(this).css({ display: 'none' });
-        });
-    }
-
-    function hidePlayer2Login() {
-        $("#player2Login").animate({ left: "2000px" }, 1000, function () {
-            $(this).css({ display: 'none' });
-        });
-    }
 
     function resizeGame() {
 
