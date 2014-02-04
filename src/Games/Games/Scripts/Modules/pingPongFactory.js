@@ -33,7 +33,6 @@
     function PlayerLoginControl(qrCodeUri, rectangle) {
         var self = this;
         self.rectangle = rectangle;
-        self.isVisible = true;
 
         var isImageLoaded = false;
         var left = 0;
@@ -47,15 +46,15 @@
         img.src = qrCodeUri;
 
         this.update = function (elapsed) {
-            if (isImageLoaded && self.isVisible) {
+            if (isImageLoaded) {
                 left = rectangle.left + (rectangle.width - img.width / scale) / 2;
                 top = rectangle.top + (rectangle.height - img.height / scale) / 2;
             }
         };
 
         this.draw = function (context) {
-            if (isImageLoaded && self.isVisible) {
-                context.clearRect(rectangle.left * scale, rectangle.top * scale, rectangle.width * scale, rectangle.height * scale);
+            context.clearRect(rectangle.left * scale, rectangle.top * scale, rectangle.width * scale, rectangle.height * scale);
+            if (isImageLoaded) {
                 context.drawImage(img, left * scale, top * scale);
             }
         };
