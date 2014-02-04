@@ -37,8 +37,13 @@
 
         $(document).ready(function() {
 
-            require(['pingPongFactory'], function(pingPongFactory) {
-                window.pingPongGame = pingPongFactory.create('gameCanvas', '@playerQrCodeUri');
+            require(['pingPongFactory'], function (pingPongFactory) {
+                var player1Score = document.getElementById('player1Score');
+                var player2Score = document.getElementById('player2Score');
+                window.pingPongGame = pingPongFactory.create('gameCanvas',
+                                                             '@playerQrCodeUri',
+                                                             function (score) { player1Score.innerHTML = score; },
+                                                             function (score) { player2Score.innerHTML = score; });
 
                 resizeGame();
                 window.addEventListener('resize', resizeGame, false);

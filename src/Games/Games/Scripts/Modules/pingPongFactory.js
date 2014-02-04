@@ -66,18 +66,48 @@
         var player2LoginControl = new PlayerLoginControl(playerQrUri + '&playerId=2', new geometry.Rectangle(GAME_WIDTH / 2, 0, GAME_WIDTH / 2, GAME_HEIGHT));
 
         var loginControlMovingSpeed = 5;
+        var isPlayer1LoginScreenIsVisible = true;
+        var isPlayer2LoginScreenIsVisible = true;
+
+        this.getIfPlayer1LoginScreenIsVisible = function () {
+            return isPlayer1LoginScreenIsVisible;
+        };
+
+        this.getIfPlayer2LoginScreenIsVisible = function () {
+            return isPlayer2LoginScreenIsVisible;
+        };
 
         this.update = function (elapsed) {
-            if (loginManager.isPlayer1InGame() && player1LoginControl.rectangle.getRight() > 0) {
-                player1LoginControl.rectangle.left -= loginControlMovingSpeed * elapsed;
-            } else if (!loginManager.isPlayer1InGame() && player1LoginControl.rectangle.left < 0) {
-                player1LoginControl.rectangle.left += loginControlMovingSpeed * elapsed;
+            if (loginManager.isPlayer1InGame()) {
+                if (player1LoginControl.rectangle.getRight() > 0) {
+                    player1LoginControl.rectangle.left -= loginControlMovingSpeed * elapsed;
+                } else {
+                    isPlayer1LoginScreenIsVisible = false;
+                }
+            } else {
+                isPlayer1LoginScreenIsVisible = true;
+                if (player1LoginControl.rectangle.left < 0) {
+                    player1LoginControl.rectangle.left += loginControlMovingSpeed * elapsed;
+                    if (player1LoginControl.rectangle.left > 0) {
+                        player1LoginControl.rectangle.left = 0;
+                    }
+                }
             }
 
-            if (loginManager.isPlayer2InGame() && player2LoginControl.rectangle.left < GAME_WIDTH) {
-                player2LoginControl.rectangle.left += loginControlMovingSpeed * elapsed;
-            } else if (!loginManager.isPlayer2InGame() && player2LoginControl.rectangle.left > GAME_WIDTH / 2) {
-                player2LoginControl.rectangle.left -= loginControlMovingSpeed * elapsed;
+            if (loginManager.isPlayer2InGame()) {
+                if (player2LoginControl.rectangle.left < GAME_WIDTH) {
+                    player2LoginControl.rectangle.left += loginControlMovingSpeed * elapsed;
+                } else {
+                    isPlayer2LoginScreenIsVisible = false;
+                }
+            } else {
+                isPlayer2LoginScreenIsVisible = true;
+                if (player2LoginControl.rectangle.left > GAME_WIDTH / 2) {
+                    player2LoginControl.rectangle.left -= loginControlMovingSpeed * elapsed;
+                    if (player2LoginControl.rectangle.left < GAME_WIDTH / 2) {
+                        player2LoginControl.rectangle.left = GAME_WIDTH / 2;
+                    }
+                }
             }
 
             player1LoginControl.update(elapsed);
@@ -205,7 +235,7 @@
         };
     }
 
-    function PingPong(canvasId, playerQrUri) {
+    function PingPong(canvasId, playerQrUri, player1ScoreCallback, player2ScoreCallback) {
 
         this.loginManager = new LoginManager();
 
@@ -243,25 +273,34 @@
             gameBackground.update(elapsed);
 
             loginControl.update(elapsed);
-
-            player1.update(elapsed);
-            player2.update(elapsed);
-            ball.update(elapsed);
             
-            ensureBallIsOnScreen();
-            ensurePlayerIsOnItsSide(player1, 0, GAME_WIDTH / 2);
-            ensurePlayerIsOnItsSide(player2, GAME_WIDTH / 2, GAME_WIDTH);
+            if (!loginControl.getIfPlayer1LoginScreenIsVisible()) {
+                player1.update(elapsed);
+            }
 
-            checkIfPlayerIntersectsBall(player1);
-            checkIfPlayerIntersectsBall(player2);
+            if (!loginControl.getIfPlayer2LoginScreenIsVisible()) {
+                player2.update(elapsed);
+            }
 
-            checkIfBallIsInGoal(player1, player2);
-            checkIfBallIsInGoal(player2, player1);
+            if (!(loginControl.getIfPlayer1LoginScreenIsVisible() || loginControl.getIfPlayer2LoginScreenIsVisible())) {
+                ball.update(elapsed);
+
+                ensureBallIsOnScreen();
+                ensurePlayerIsOnItsSide(player1, 0, GAME_WIDTH / 2);
+                ensurePlayerIsOnItsSide(player2, GAME_WIDTH / 2, GAME_WIDTH);
+
+                checkIfPlayerIntersectsBall(player1);
+                checkIfPlayerIntersectsBall(player2);
+
+                checkIfBallIsInGoal(player1, player2, player2ScoreCallback);
+                checkIfBallIsInGoal(player2, player1, player1ScoreCallback);
+            }
         };
 
-        function checkIfBallIsInGoal(player, otherPlayer) {
+        function checkIfBallIsInGoal(player, otherPlayer, scoreCallback) {
             if (ball.circle.intersectsRectangle(player.goal.rectangle)) {
                 otherPlayer.incrementScore();
+                scoreCallback(otherPlayer.getScore());
                 ball.circle.x = GAME_WIDTH / 2;
                 ball.circle.y = GAME_HEIGHT / 2;
             }
@@ -334,8 +373,8 @@
     }
 
     return {
-        create: function(canvasId, playerQrUri) {
-            return new PingPong(canvasId, playerQrUri);
+        create: function(canvasId, playerQrUri, player1ScoreCallback, player2ScoreCallback) {
+            return new PingPong(canvasId, playerQrUri, player1ScoreCallback, player2ScoreCallback);
         }
     };
 });
