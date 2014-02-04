@@ -3,30 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ping pong game</title>
+    <title>@ViewBag.GameName</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
     <body>
-        <header>
-            <div class="container">
-                <div class="col-md-4">
-                    <div id="player1Header">
-                        <span id="player1Score">0</span>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div id="gameTitle">
-                        <span>@ViewBag.GameName</span>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div id="player2Header">
-                        <span id="player2Score">0</span>
-                    </div>
-                </div>
-            </div>
-        </header>
+        @RenderSection("header", required: false)
         @RenderBody()
 
         @Scripts.Render("~/bundles/jquery")

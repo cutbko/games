@@ -1,42 +1,43 @@
-﻿
-@{
-    Layout = null;
-}
+﻿<div id="gameArea">
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+</div>
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>PlayerControl</title>
-</head>
-<body>
-    <div>
-    </div>
-    @Scripts.Render("~/bundles/jquery")
-    
+@section scripts
+{
     <script>
-        var serverSocketChannelUri = ('ws://@Request.Url.Host:@Request.Url.Port' + '@Url.HttpRouteUrl("DefaultApi", new { controller = "PingPongApi", action = "ConnectPlayer", gameId = ViewBag.GameId, playerId = ViewBag.PlayerId })').replace('&amp;', '&');
+        var serverSocketChannelUri = ('ws://@Request.Url.Host:@Request.Url.Port' + '@Url.HttpRouteUrl("DefaultApi", new {controller = "PingPongApi", action = "ConnectPlayer", gameId = ViewBag.GameId, playerId = ViewBag.PlayerId})').replace('&amp;', '&');
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             var ws = new WebSocket(serverSocketChannelUri);
 
-            ws.onopen = function () {
+            ws.onopen = function() {
                 alert('open');
             };
 
-            ws.onmessage = function (event) {
+            ws.onmessage = function(event) {
                 alert('message');
             };
 
-            ws.onerror = function (event) {
+            ws.onerror = function(event) {
                 alert('error');
             };
 
             ws.onclose = function() {
                 alert('close');
             };
+
+            var canvas = document.getElementById('gameCanvas');
+            canvas.addEventListener('mousedown', function (e) {
+                console.log(e);
+            });
+
+            canvas.addEventListener('mousemove', function (e) {
+                console.log(e);
+            });
+
+            canvas.addEventListener('mouseup', function (e) {
+                console.log(e);
+            });
         });
     </script>
-</body>
-</html>
+}

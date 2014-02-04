@@ -2,6 +2,29 @@
     var playerQrCodeUri = Url.Action("PlayerJoinQr", "PingPong", new {gameId = ViewBag.GameId}, Request.Url.Scheme);
 }
 
+@section header
+{
+    <header>
+        <div class="container">
+            <div class="col-md-4">
+                <div id="player1Header">
+                    <span id="player1Score">0</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div id="gameTitle">
+                    <span>@ViewBag.GameName</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div id="player2Header">
+                    <span id="player2Score">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+}
+
 <div id="gameArea">
     <canvas id="gameCanvas" width="0" height="0"></canvas>
 </div>
@@ -80,3 +103,5 @@
     }
     </script>
 }
+
+
