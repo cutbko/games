@@ -45,6 +45,8 @@
                 context.stroke();
             }
 
+            drawControl(canvas.width / 2, canvas.height / 2);
+
             canvas.addEventListener('mousedown', function (e) {
                 isPressed = true;
                 drawControl(e.offsetX, e.offsetY);
@@ -58,7 +60,7 @@
                 }
             });
 
-            canvas.addEventListener('mouseup', function() { isPressed = false; });
+            canvas.addEventListener('mouseup', function () { isPressed = false; });
         });
     </script>
 }
