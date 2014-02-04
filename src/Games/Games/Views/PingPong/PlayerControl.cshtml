@@ -10,6 +10,22 @@
         $(document).ready(function() {
             var ws = new WebSocket(serverSocketChannelUri);
 
+            ws.onopen = function () {
+                alert('open');
+            };
+
+            ws.onmessage = function (event) {
+                alert('message');
+            };
+
+            ws.onerror = function (event) {
+                alert('error');
+            };
+
+            ws.onclose = function () {
+                alert('close');
+            };
+
             var canvas = document.getElementById('gameCanvas');
             var context = canvas.getContext('2d');
 
