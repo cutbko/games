@@ -53,8 +53,6 @@ namespace Games.Models.WebSockets.Player
 
         public override void OnMessage(string message)
         {
-            base.OnMessage(message);
-
             var playerPosition = JsonConvert.DeserializeObject<PlayerPosition>(message);
 
             OnMoved(playerPosition);

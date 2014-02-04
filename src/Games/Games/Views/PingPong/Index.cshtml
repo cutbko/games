@@ -64,6 +64,12 @@
                         } else if (serverEvent.PlayerId == 2) {
                             pingPongGame.loginManager.player1Left();
                         }
+                    } else if (serverEvent.ActionType == 'Move') {
+                        if (serverEvent.PlayerId == 1) {
+                            pingPongGame.setPlayer1Position(serverEvent.Position.X, serverEvent.Position.Y);
+                        } else if (serverEvent.PlayerId == 2) {
+                            pingPongGame.setPlayer2Position(serverEvent.Position.X, serverEvent.Position.Y);
+                        }
                     }
                 };
 
