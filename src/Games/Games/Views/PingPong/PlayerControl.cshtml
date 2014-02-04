@@ -1,5 +1,5 @@
 ﻿<div id="gameArea">
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <canvas id="gameCanvas" width="400" height="400" style="background-color: grey;"></canvas>
 </div>
 
 @section scripts
@@ -10,34 +10,39 @@
         $(document).ready(function() {
             var ws = new WebSocket(serverSocketChannelUri);
 
-            ws.onopen = function() {
-                alert('open');
-            };
-
-            ws.onmessage = function(event) {
-                alert('message');
-            };
-
-            ws.onerror = function(event) {
-                alert('error');
-            };
-
-            ws.onclose = function() {
-                alert('close');
-            };
-
             var canvas = document.getElementById('gameCanvas');
+            var context = canvas.getContext('2d');
+
+            var isPressed = false;
+
+            function sendCoordinates(x, y) {
+                ws.send({ X: x / canvas.width, Y: y / canvas.height });
+            }
+
+            function drawControl(x, y) {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+
+                context.beginPath();
+                context.lineWidth = "6";
+                context.strokeStyle = "red";
+                context.rect(x - 10, y - 10, 20, 20);
+                context.stroke();
+            }
+
             canvas.addEventListener('mousedown', function (e) {
-                console.log(e);
+                isPressed = true;
+                drawControl(e.offsetX, e.offsetY);
+                sendCoordinates(e.offsetX, e.offsetY);
             });
 
             canvas.addEventListener('mousemove', function (e) {
-                console.log(e);
+                if (isPressed) {
+                    drawControl(e.offsetX, e.offsetY);
+                    sendCoordinates(e.offsetX, e.offsetY);
+                }
             });
 
-            canvas.addEventListener('mouseup', function (e) {
-                console.log(e);
-            });
+            canvas.addEventListener('mouseup', function() { isPressed = false; });
         });
     </script>
 }
