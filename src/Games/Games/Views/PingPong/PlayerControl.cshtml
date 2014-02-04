@@ -32,7 +32,7 @@
             var isPressed = false;
 
             function sendCoordinates(x, y) {
-                ws.send({ X: x / canvas.width, Y: y / canvas.height });
+                ws.send(JSON.stringify({ X: x / canvas.width, Y: y / canvas.height }));
             }
 
             function drawControl(x, y) {
